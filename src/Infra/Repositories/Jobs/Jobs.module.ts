@@ -1,26 +1,23 @@
+import { JOB, KEY_OF_INJECTION } from '@metadata';
 import { Module } from '@nestjs/common';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { RepositoriesService } from 'src/Domain/Services/Repositories.service';
-import { RepositoryConsumer } from './Consumers/Job.consumer';
-import { RepositoryProducerService } from './Producers/Job.Producer';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      exchanges: [
-        {
-          name: 'repositories_exchange',
-          type: 'topic',
+    ClientsModule.register([
+      {
+        name: KEY_OF_INJECTION.REPO_QUEUE,
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'repositories_queue',
+          queueOptions: {
+            durable: true,
+          },
         },
-      ],
-      uri: 'amqp://user:password@localhost:5672',
-    }),
+      },
+    ]),
   ],
-  providers: [
-    RepositoriesService,
-    RepositoryProducerService,
-    RepositoryConsumer,
-  ],
-  exports: [RepositoryProducerService],
+  exports: [KEY_OF_INJECTION.REPO_QUEUE],
 })
-export class RepositoriesQueueModule {}
+export class JobsModule {}

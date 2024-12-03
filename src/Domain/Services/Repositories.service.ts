@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices'; // Importação do ClientProxy
 import { KEY_OF_INJECTION } from 'src/@shared/@metadata';
 import { RepositoryDTO } from 'src/@shared/@dtos';
 import { IRepoRepository } from '../Interfaces/Repositories/Repos/IRepo.repository';
@@ -11,8 +12,9 @@ import {
 @Injectable()
 export class RepositoriesService {
   constructor(
-    @Inject(KEY_OF_INJECTION.REPOS_REPOSITORY)
+    @Inject(KEY_OF_INJECTION.REPO_QUEUE)
     private readonly reposRepository: IRepoRepository,
+    private readonly rabbitClient: ClientProxy,
   ) {}
 
   async create(repository: RepositoryDTO): Promise<void> {
@@ -24,6 +26,7 @@ export class RepositoriesService {
 
     try {
       await this.reposRepository.create(newRepo);
+      this.rabbitClient.emit('repository.created', newRepo); // Canal: 'repository.created'
     } catch (err: any) {
       throw new Error(`Error creating the repository: ${err.message}`);
     }
@@ -41,11 +44,7 @@ export class RepositoriesService {
   async getBy(unqRef: RepositoryModelUniqRef): Promise<Repository | null> {
     try {
       let repository = await this.reposRepository.getBy(unqRef);
-      if (repository == null) {
-        return;
-      } else {
-        return repository;
-      }
+      return repository;
     } catch (err) {
       throw err;
     }
@@ -57,6 +56,7 @@ export class RepositoriesService {
   ): Promise<void> {
     try {
       await this.reposRepository.update(unqRef, updateData);
+      this.rabbitClient.emit('repository.updated', { unqRef, updateData });
     } catch (error) {
       throw new Error(`Error updating repository: ${error.message}`);
     }
@@ -65,6 +65,8 @@ export class RepositoriesService {
   async delete(unqRef: RepositoryModelUniqRef): Promise<void> {
     try {
       await this.reposRepository.delete(unqRef);
+      // Publicar mensagem no RabbitMQ após deletar
+      this.rabbitClient.emit('repository.deleted', unqRef);
     } catch (error) {
       throw new Error(`Error deleting repository: ${error.message}`);
     }
