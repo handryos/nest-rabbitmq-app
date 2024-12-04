@@ -10,13 +10,7 @@ import { AuthService } from 'src/Domain/Services/Auth.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { JwtModule } from '@nestjs/jwt';
 @Module({
-  imports: [
-    SequelizeModule.forFeature([User]),
-    JwtModule.register({
-      secret: 'your-secret-key',
-      signOptions: { expiresIn: '2h' },
-    }),
-  ],
+  imports: [SequelizeModule.forFeature([User])],
   controllers: [AuthControler],
   providers: [
     {

@@ -1,9 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AuthService } from 'src/Domain/Services/Auth.service';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { AuthDTO } from 'src/@shared/@dtos';
-import CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 dotenv.config();
 

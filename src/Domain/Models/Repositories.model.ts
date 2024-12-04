@@ -4,13 +4,15 @@ import { Table, Column, Model, DataType } from 'sequelize-typescript';
 @ObjectType()
 @Table({
   tableName: 'Repositories',
-  timestamps: false,
+  timestamps: true,
 })
 export class Repository extends Model {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    field: "id",
+    allowNull: false 
   })
   id!: number;
 

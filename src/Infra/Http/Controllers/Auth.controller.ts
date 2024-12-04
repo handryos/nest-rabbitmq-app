@@ -46,7 +46,7 @@ class AuthControler {
       };
     } catch (err: any) {
       throw new InternalServerErrorException(
-        'Invalid email or password. Verify!.',
+        'Invalid name or password. Verify!.',
       );
     }
   }

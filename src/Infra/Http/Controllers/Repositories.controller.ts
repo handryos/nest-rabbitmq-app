@@ -30,7 +30,7 @@ export class RepositoriesController {
   ) {}
 
   @Post()
-  @UseGuards(AuthenticatedRequest)
+  // @UseGuards(AuthenticatedRequest) lembrar de voltar os guards
   async addRepository(@Body() repository: RepositoryDTO): Promise<void> {
     try {
       await this.add.execute(repository);
@@ -43,7 +43,7 @@ export class RepositoriesController {
   }
 
   @Get(':name')
-  @UseGuards(AuthenticatedRequest)
+  // @UseGuards(AuthenticatedRequest)
   async getRepositoryByName(@Param('name') name: string) {
     try {
       return await this.getBy.execute(name);
@@ -56,7 +56,7 @@ export class RepositoriesController {
   }
 
   @Get()
-  @UseGuards(AuthenticatedRequest)
+  // @UseGuards(AuthenticatedRequest)
   async getManyRepositories(@Query() pagination: PaginationDto) {
     try {
       return await this.getAll.execute(pagination);
@@ -69,7 +69,7 @@ export class RepositoriesController {
   }
 
   @Put(':id')
-  @UseGuards(AuthenticatedRequest)
+  // @UseGuards(AuthenticatedRequest)
   async updateRepository(
     @Param('id') id: number,
     @Body() repository: RepositoryDTO,
@@ -85,7 +85,7 @@ export class RepositoriesController {
   }
 
   @Delete(':name')
-  @UseGuards(AuthenticatedRequest)
+  // @UseGuards(AuthenticatedRequest)
   async deleteRepository(@Param('name') name: string) {
     try {
       await this.remove.execute(name);

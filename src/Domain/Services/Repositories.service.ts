@@ -8,12 +8,13 @@ import {
   RepositoryModelUniqRef,
   RepositoryUpdateModel,
 } from '../Models/Repositories.model';
+import { RabbitMQConfig } from 'src/Infra/Repositories/Jobs/RabbitMQConfig';
 
 @Injectable()
 export class RepositoriesService {
   constructor(
-    @Inject(KEY_OF_INJECTION.REPO_QUEUE)
     private readonly reposRepository: IRepoRepository,
+    @Inject(RabbitMQConfig.queues.createRepository.routingKey)
     private readonly rabbitClient: ClientProxy,
   ) {}
 

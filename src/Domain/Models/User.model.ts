@@ -4,9 +4,13 @@ import { Field, HideField, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Table({ tableName: 'Users', timestamps: false })
 export class User extends Model {
-  @Column({ primaryKey: true })
-  @Field(() => String)
-  id: string;
+  @Column({ type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    field: "id",
+    allowNull: false })
+  @Field(() => Number)
+  id!: number;
 
   @Column({
     type: DataType.STRING(70),

@@ -4,6 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/Domain/Services/Auth.service';
 import { AuthDTO } from 'src/@shared/@dtos';
 import { AuthResponse } from 'src/@shared/@types/index';
+import * as CryptoJS from 'crypto-js';
+
 
 @Injectable()
 export class LoginUseCase {
@@ -37,7 +39,7 @@ export class LoginUseCase {
     }
     const isPasswordValid = bcrypt.compareSync(userDto.password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Email or password invalid, verify!');
+      throw new UnauthorizedException('Name or password invalid, verify!');
     }
 
     const payload = { id: user.id, name: user.name };

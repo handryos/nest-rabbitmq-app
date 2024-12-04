@@ -1,18 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
-import { KEY_OF_INJECTION } from '@metadata';
+import { RabbitMQConfig } from './Infra/Repositories/Jobs/RabbitMQConfig';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const queues = [KEY_OF_INJECTION.REPO_QUEUE];
+  const queues = [RabbitMQConfig.queues.createRepository.name, RabbitMQConfig.queues.updateRepository.name];
 
   for (const queue of queues) {
     app.connectMicroservice({
       transport: Transport.RMQ,
       options: {
-        urls: ['amqp://localhost:5672'],
+        urls: ['amqp://rabbitmq-my:5672'],
         queue: queue,
         noAck: false,
         queueOptions: {
@@ -29,5 +29,6 @@ async function bootstrap() {
   });
   await app.startAllMicroservices();
   await app.listen(process.env.PORT ?? 8000);
+  console.log('Server iniciado✅');
 }
 bootstrap();
