@@ -6,7 +6,7 @@ import { Table, Column, Model, DataType } from 'sequelize-typescript';
   tableName: 'Repositories',
   timestamps: false,
 })
-export class Repository extends Model<Repository> {
+export class Repository extends Model {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,

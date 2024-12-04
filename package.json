@@ -1,5 +1,5 @@
 {
-  "name": "dynamox-test",
+  "name": "app",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -38,6 +38,7 @@
     "class-validator": "^0.14.1",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
+    "mariadb": "^3.4.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.0",

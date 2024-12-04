@@ -1,8 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AuthService } from 'src/Domain/Services/Auth.service';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { AuthDTO } from 'src/@shared/@dtos';
+import CryptoJS from 'crypto-js';
 
 dotenv.config();
 
@@ -26,11 +27,13 @@ export class RegisterUseCase {
     );
     const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
     userDto.password = decryptedPassword;
+
     if (existingUser) {
       throw new InternalServerErrorException(
         `User "${existingUser.name}" already exists`,
       );
     }
+
     await this.authService.create({
       name: userDto.name,
       password: hashedPassword,

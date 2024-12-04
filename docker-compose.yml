@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -8,5 +10,37 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb-my
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DB}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  nestjs-app:
+    build:
+      context: . # Usando o diretório atual como contexto de build
+      dockerfile: Dockerfile
+    container_name: nestjs-app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mariadb
+      - rabbitmq
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DB: ${DB_DB}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+
 volumes:
   rabbitmq_data:
+  mariadb_data:

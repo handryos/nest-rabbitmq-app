@@ -3,7 +3,7 @@ import { RepositoriesSequelizeRepository } from './Sequelize/RepositoriesSequeli
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from 'src/Domain/Models/User.model';
 import { Repository } from 'src/Domain/Models/Repositories.model';
-import { UserSequelizeRepository } from './Sequelize/AccountSequelize.repository';
+import { UserSequelizeRepository } from './Sequelize/UserSequelize.repository';
 
 @Global()
 @Module({

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices'; // Importação do ClientProxy
+import { ClientProxy } from '@nestjs/microservices';
 import { KEY_OF_INJECTION } from 'src/@shared/@metadata';
 import { RepositoryDTO } from 'src/@shared/@dtos';
 import { IRepoRepository } from '../Interfaces/Repositories/Repos/IRepo.repository';
@@ -26,7 +26,7 @@ export class RepositoriesService {
 
     try {
       await this.reposRepository.create(newRepo);
-      this.rabbitClient.emit('repository.created', newRepo); // Canal: 'repository.created'
+      this.rabbitClient.emit('repository.created', newRepo);
     } catch (err: any) {
       throw new Error(`Error creating the repository: ${err.message}`);
     }
@@ -65,7 +65,6 @@ export class RepositoriesService {
   async delete(unqRef: RepositoryModelUniqRef): Promise<void> {
     try {
       await this.reposRepository.delete(unqRef);
-      // Publicar mensagem no RabbitMQ após deletar
       this.rabbitClient.emit('repository.deleted', unqRef);
     } catch (error) {
       throw new Error(`Error deleting repository: ${error.message}`);

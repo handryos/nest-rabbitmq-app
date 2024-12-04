@@ -18,6 +18,5 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  exports: [KEY_OF_INJECTION.REPO_QUEUE],
 })
 export class JobsModule {}

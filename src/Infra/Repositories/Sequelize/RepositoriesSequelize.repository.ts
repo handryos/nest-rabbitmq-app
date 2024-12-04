@@ -2,7 +2,6 @@ import { GetWithPaginationResult, PaginationProps } from '@types';
 import { InjectModel } from '@nestjs/sequelize';
 import { InternalServerErrorException } from '@nestjs/common';
 import { splitKeyAndValue } from 'src/@shared/@utils/tools';
-import { User } from 'src/Domain/Models/User.model';
 import { IRepoRepository } from 'src/Domain/Interfaces/Repositories/Repos/IRepo.repository';
 import {
   Repository,
@@ -12,7 +11,7 @@ import {
 
 export class RepositoriesSequelizeRepository implements IRepoRepository {
   constructor(
-    @InjectModel(User) private readonly repoModel: typeof Repository,
+    @InjectModel(Repository) private readonly repoModel: typeof Repository,
   ) {}
 
   async create(model: Partial<Repository>): Promise<void> {

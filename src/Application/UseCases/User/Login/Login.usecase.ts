@@ -12,6 +12,14 @@ export class LoginUseCase {
     private readonly jwtService: JwtService,
   ) {}
 
+  public cleanString(input: string): string {
+    let cleanedString = input.replace(/\\/g, '');
+
+    cleanedString = cleanedString.replace(/^"|"$/g, '');
+
+    return cleanedString;
+  }
+
   async execute(userDto: AuthDTO): Promise<AuthResponse> {
     const user = await this.authService.getBy({ name: userDto.name });
     const secretKey: string = process.env.SECRET_KEY || 'secret';
@@ -22,7 +30,7 @@ export class LoginUseCase {
     );
 
     const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
-    user.password = cleanString(decryptedPassword);
+    user.password = this.cleanString(decryptedPassword);
 
     if (!user) {
       throw new UnauthorizedException('User not exists, verify!');
