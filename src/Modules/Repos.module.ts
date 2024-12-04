@@ -11,6 +11,9 @@ import { UpdateRepository } from 'src/Application/UseCases/Repos/Update/UpdateRe
 import { DeleteRepository } from 'src/Application/UseCases/Repos/Remove/RemoveRepository.usecase';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Repository } from 'src/Domain/Models/Repositories.model';
+import { RabbitMQConfig } from 'src/Infra/Repositories/Jobs/RabbitMQConfig';
+import { ClientProxy } from '@nestjs/microservices';
+
 
 @Module({
   imports: [SequelizeModule.forFeature([Repository])],
@@ -20,6 +23,15 @@ import { Repository } from 'src/Domain/Models/Repositories.model';
       provide: KEY_OF_INJECTION.REPOS_REPOSITORY,
       useClass: RepositoriesSequelizeRepository,
     },
+    {
+      provide: RabbitMQConfig.queues.createRepository.routingKey,
+      useFactory: (rabbitClient: ClientProxy) => {
+        return rabbitClient;
+      },
+      inject: [ClientProxy],
+
+    },
+
     AddRepository,
     GetManyRepositories,
     GetRepositorieByName,

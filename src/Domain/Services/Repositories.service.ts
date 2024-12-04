@@ -27,7 +27,7 @@ export class RepositoriesService {
 
     try {
       await this.reposRepository.create(newRepo);
-      this.rabbitClient.emit('repository.created', newRepo);
+      await this.rabbitClient.emit('repository.created', newRepo);
     } catch (err: any) {
       throw new Error(`Error creating the repository: ${err.message}`);
     }
