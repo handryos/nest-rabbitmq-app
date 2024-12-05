@@ -1,17 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
-import { JOB } from '@metadata';
+import { Injectable, Inject } from '@nestjs/common';
 import { RepositoryDTO } from 'src/@shared/@dtos';
-import {
-  RepositoryModelUniqRef,
-  RepositoryUpdateModel,
-} from 'src/Domain/Models/Repositories.model';
+import { Repository } from 'src/Domain/Models/Repositories.model';
+import { RabbitMQConfig } from 'src/Infra/Repositories/Jobs/RabbitMQConfig';
 import { RepositoriesService } from 'src/Domain/Services/Repositories.service';
-import { RabbitMQConfig } from '../RabbitMQConfig';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { InternalServerErrorException } from '@nestjs/common';
+
 
 @Injectable()
 export class RepositoryConsumer {
-  constructor(private readonly repositoriesService: RepositoriesService) {}
+  constructor(
+     private readonly service: RepositoriesService) {}
 
   @RabbitSubscribe({
     exchange: RabbitMQConfig.exchange,
@@ -20,35 +19,12 @@ export class RepositoryConsumer {
   })
   async createRepositoryHandler(data: Partial<RepositoryDTO>): Promise<{}> {
     try {
-      const dto = Object.assign(new RepositoryDTO(), data);
-      console.log("chegou consumer")
-      await this.repositoriesService.create(dto);
-
-      return {
-        message:"Success!"
-      }
+      const dto = Object.assign(new RepositoryDTO(), data as Repository);
+      await this.service.create(dto);
+      return { message: 'Success!' };
     } catch (error) {
       console.error('Error processing create repository job:', error);
-      throw error;
-    }
-  }
-
-  @RabbitSubscribe({
-    exchange: RabbitMQConfig.exchange,
-    routingKey: RabbitMQConfig.queues.updateRepository.routingKey,
-    queue: RabbitMQConfig.queues.updateRepository.name,
-  })
-  async updateRepositoryHandler(data: {
-    ref: RepositoryModelUniqRef;
-    updates: RepositoryUpdateModel;
-  }): Promise<void> {
-    try {
-      const { ref, updates } = data;
-      await this.repositoriesService.update(ref, updates);
-      console.log('Processed job:', JOB.UPDATE_REPO_JOB, data);
-    } catch (error) {
-      console.error('Error processing update repository job:', error);
-      throw error;
+      return new InternalServerErrorException(error.message)
     }
   }
 }

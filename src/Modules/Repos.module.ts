@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { RepositoriesController } from 'src/Infra/Http/Controllers/Repositories.controller';
 import { RepositoriesSequelizeRepository } from 'src/Infra/Repositories/Sequelize/RepositoriesSequelize.repository';
 import { KEY_OF_INJECTION } from '@metadata';
@@ -11,32 +11,27 @@ import { UpdateRepository } from 'src/Application/UseCases/Repos/Update/UpdateRe
 import { DeleteRepository } from 'src/Application/UseCases/Repos/Remove/RemoveRepository.usecase';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Repository } from 'src/Domain/Models/Repositories.model';
-import { RabbitMQConfig } from 'src/Infra/Repositories/Jobs/RabbitMQConfig';
-import { ClientProxy } from '@nestjs/microservices';
-
+import { JobsModule } from 'src/Infra/Repositories/Jobs/Jobs.module';
+import { RepositoryConsumer } from 'src/Infra/Repositories/Jobs/Consumers/Job.consumer';
+import { RepositoriesService } from 'src/Domain/Services/Repositories.service';
+import { RepositoryProducer } from 'src/Infra/Repositories/Jobs/Producer/Job.producer';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Repository])],
+  imports: [SequelizeModule.forFeature([Repository]), forwardRef(() => JobsModule),],
   controllers: [RepositoriesController],
   providers: [
     {
       provide: KEY_OF_INJECTION.REPOS_REPOSITORY,
       useClass: RepositoriesSequelizeRepository,
     },
-    {
-      provide: RabbitMQConfig.queues.createRepository.routingKey,
-      useFactory: (rabbitClient: ClientProxy) => {
-        return rabbitClient;
-      },
-      inject: [ClientProxy],
-
-    },
-
+    RepositoryConsumer,
+    RepositoriesService,  
     AddRepository,
     GetManyRepositories,
     GetRepositorieByName,
     UpdateRepository,
     DeleteRepository,
   ],
+  exports: [RepositoriesService],  
 })
 export class ReposModule {}

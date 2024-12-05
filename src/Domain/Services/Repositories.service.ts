@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
 import { KEY_OF_INJECTION } from 'src/@shared/@metadata';
 import { RepositoryDTO } from 'src/@shared/@dtos';
 import { IRepoRepository } from '../Interfaces/Repositories/Repos/IRepo.repository';
@@ -8,30 +7,27 @@ import {
   RepositoryModelUniqRef,
   RepositoryUpdateModel,
 } from '../Models/Repositories.model';
-import { RabbitMQConfig } from 'src/Infra/Repositories/Jobs/RabbitMQConfig';
 
 @Injectable()
 export class RepositoriesService {
   constructor(
+    @Inject (KEY_OF_INJECTION.REPOS_REPOSITORY)
     private readonly reposRepository: IRepoRepository,
-    @Inject(RabbitMQConfig.queues.createRepository.routingKey)
-    private readonly rabbitClient: ClientProxy,
   ) {}
 
-  async create(repository: RepositoryDTO): Promise<void> {
-    const newRepo = Object.assign(new Repository().dataValues, {
-      name: repository.name,
-      stars: repository.stars,
-      owner: repository.owner,
-    } as Repository);
+async create(repository: RepositoryDTO): Promise<void> {
+  const newRepo = Object.assign(new Repository().dataValues, {
+    name: repository.name,
+    stars: repository.stars,
+    owner: repository.owner,
+  } as Repository);
 
-    try {
-      await this.reposRepository.create(newRepo);
-      await this.rabbitClient.emit('repository.created', newRepo);
-    } catch (err: any) {
-      throw new Error(`Error creating the repository: ${err.message}`);
-    }
+  try {
+    await this.reposRepository.create(newRepo);
+  } catch (err: any) {
+    throw new Error(`Error creating the repository: ${err.message}`);
   }
+}
 
   async getAll(where?: Partial<Repository>): Promise<Repository[]> {
     try {
@@ -57,7 +53,6 @@ export class RepositoriesService {
   ): Promise<void> {
     try {
       await this.reposRepository.update(unqRef, updateData);
-      this.rabbitClient.emit('repository.updated', { unqRef, updateData });
     } catch (error) {
       throw new Error(`Error updating repository: ${error.message}`);
     }
@@ -66,7 +61,6 @@ export class RepositoriesService {
   async delete(unqRef: RepositoryModelUniqRef): Promise<void> {
     try {
       await this.reposRepository.delete(unqRef);
-      this.rabbitClient.emit('repository.deleted', unqRef);
     } catch (error) {
       throw new Error(`Error deleting repository: ${error.message}`);
     }

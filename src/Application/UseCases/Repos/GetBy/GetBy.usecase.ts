@@ -1,6 +1,5 @@
 import { KEY_OF_INJECTION } from '@metadata';
 import { Inject, Injectable } from '@nestjs/common';
-import { RepositoryDTO } from 'src/@shared/@dtos';
 import { IRepoRepository } from 'src/Domain/Interfaces/Repositories/Repos/IRepo.repository';
 
 @Injectable()
@@ -11,8 +10,16 @@ export class GetRepositorieByName {
   ) {}
 
   async execute(repo: string) {
-    const repos = await this.repoRepository.getBy({ name: repo });
+    if (!repo || typeof repo !== 'string' || repo.trim() === '') {
+      throw new Error('Repository name is required and must be a non-empty string.');
+    }
 
-    return repos;
+    const repository = await this.repoRepository.getBy({ name: repo });
+
+    if (!repository) {
+      throw new Error(`Repository with name "${repo}" not found.`);
+    }
+
+    return repository;
   }
 }

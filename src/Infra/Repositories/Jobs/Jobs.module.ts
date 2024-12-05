@@ -1,14 +1,17 @@
-import { Module } from '@nestjs/common';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Module, forwardRef } from '@nestjs/common';
 import { RabbitMQConfig } from './RabbitMQConfig';
 import * as dotenv from 'dotenv';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { RepositoryConsumer } from './Consumers/Job.consumer';
+import { ReposModule } from 'src/Modules/Repos.module';
+import { RepositoryProducer } from './Producer/Job.producer';
+
 
 dotenv.config();
 
 @Module({
   imports: [
-    RabbitMQModule.forRoot(RabbitMQModule, {
+     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [
         {
           name: RabbitMQConfig.exchange,
@@ -18,20 +21,10 @@ dotenv.config();
       uri: process.env.RABBITMQ_URL || 'amqp://localhost:5672',
       connectionInitOptions: { wait: false },
     }),
-
-    ClientsModule.register([
-      {
-        name: RabbitMQConfig.queues.createRepository.routingKey,
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RABBITMQ_URL || 'amqp://localhost:5672'],
-          queue: RabbitMQConfig.queues.createRepository.name,
-          queueOptions: {
-            durable: true,
-          },
-        },
-      },
-    ]),
+     forwardRef(() => ReposModule), 
   ],
+  providers: [RepositoryConsumer, RepositoryProducer],
+  exports: [RepositoryProducer],
 })
 export class JobsModule {}
+

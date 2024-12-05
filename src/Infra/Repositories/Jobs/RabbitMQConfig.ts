@@ -5,7 +5,7 @@ export const RabbitMQConfig = {
   queues: {
     createRepository: {
       name: 'create_repository_queue',
-      routingKey: JOB.CREATE_REPO_JOB,
+      routingKey: "create_repo_job",
     },
     updateRepository: {
       name: 'update_repository_queue',
