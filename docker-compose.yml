@@ -32,7 +32,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: nestjs-app
-    ports: []  # Não expõe a porta 3000 ao host
+    ports: [] 
     depends_on:
       - mariadb
       - rabbitmq
@@ -55,7 +55,7 @@ services:
     ports:
       - "5500:5500"  
     depends_on:
-      - nestjs-app  # Nome correto do serviço Nest.js
+      - nestjs-app  
     networks:
       - app-network  
     restart: always
