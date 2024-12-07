@@ -24,13 +24,6 @@ export class AuthService {
 
   async create(user: AuthDTO): Promise<void> {
     let hashedPassword = await this.hashPassword(user.password);
-    let existingUser = await this.userRepository.getBy({ name: user.name });
-    if (existingUser) {
-      throw new InternalServerErrorException(
-        `User "${user.name}" already exists`,
-      );
-    }
-
     const newUser = Object.assign(new User().dataValues, {
       name: user.name,
       password: hashedPassword,

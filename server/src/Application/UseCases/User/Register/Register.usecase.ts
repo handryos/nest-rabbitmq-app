@@ -17,26 +17,32 @@ export class RegisterUseCase {
     return bcrypt.hash(password, salt);
   }
 
-  async execute(userDto: AuthDTO): Promise<void> {
-    let hashedPassword = await this.hashPassword(userDto.password);
-    let existingUser = await this.authService.getBy({ name: userDto.name });
-
-    const bytes = CryptoJS.AES.decrypt(
-      userDto.password,
-      process.env.SECRET_CRYPTO_KEY || 'secret',
-    );
-    const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
-    userDto.password = decryptedPassword;
-
-    if (existingUser) {
-      throw new InternalServerErrorException(
-        `User "${existingUser.name}" already exists`,
-      );
-    }
-
-    await this.authService.create({
-      name: userDto.name,
-      password: hashedPassword,
-    });
+public cleanString(input: string): string {
+    let cleanedString = input.replace(/\\/g, '');
+    cleanedString = cleanedString.replace(/^"|"$/g, '');
+    return cleanedString;
   }
+
+async execute(userDto: AuthDTO): Promise<void> {
+  const existingUser = await this.authService.getBy({ name: userDto.name });
+
+  if (existingUser) {
+    throw new InternalServerErrorException(
+      `User "${existingUser.name}" already exists`,
+    );
+  }
+
+  const secretKey = 'secret'; 
+  const bytes = CryptoJS.AES.decrypt(userDto.password, secretKey);
+  const decryptedPassword = this.cleanString(bytes.toString(CryptoJS.enc.Utf8));
+
+  if (!decryptedPassword) {
+    throw new InternalServerErrorException('Failed to decrypt password.');
+  }
+
+  await this.authService.create({
+    name: userDto.name,
+    password: decryptedPassword,
+  });
+}
 }

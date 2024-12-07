@@ -6,7 +6,6 @@ import { AuthDTO } from 'src/@shared/@dtos';
 import { AuthResponse } from 'src/@shared/@types/index';
 import * as CryptoJS from 'crypto-js';
 
-
 @Injectable()
 export class LoginUseCase {
   constructor(
@@ -16,28 +15,27 @@ export class LoginUseCase {
 
   public cleanString(input: string): string {
     let cleanedString = input.replace(/\\/g, '');
-
     cleanedString = cleanedString.replace(/^"|"$/g, '');
-
     return cleanedString;
   }
 
   async execute(userDto: AuthDTO): Promise<AuthResponse> {
     const user = await this.authService.getBy({ name: userDto.name });
-    const secretKey: string = process.env.SECRET_KEY || 'secret';
-
-    const bytes = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.SECRET_CRYPTO_KEY || 'secret',
-    );
-
-    const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
-    user.password = this.cleanString(decryptedPassword);
 
     if (!user) {
       throw new UnauthorizedException('User not exists, verify!');
     }
-    const isPasswordValid = bcrypt.compareSync(userDto.password, user.password);
+
+    const secretKey: string = 'secret';
+
+    const bytes = CryptoJS.AES.decrypt(userDto.password, secretKey);
+    const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
+ 
+    if (!decryptedPassword) {
+      throw new UnauthorizedException('Failed to decrypt password.');
+    }
+
+    const isPasswordValid = await bcrypt.compare(this.cleanString(decryptedPassword), user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Name or password invalid, verify!');
     }

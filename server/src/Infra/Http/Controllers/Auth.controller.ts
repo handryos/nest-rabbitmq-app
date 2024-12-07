@@ -45,6 +45,7 @@ class AuthControler {
         token: result.access_token,
       };
     } catch (err: any) {
+      console.log(err)
       throw new InternalServerErrorException(
         'Invalid name or password. Verify!.',
       );
