@@ -6,15 +6,17 @@ import Iconify from "../Iconify/Iconify";
 export type IProps = {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   title?: string;
+  show: boolean;
 };
 
-const ConfirmButton = ({ onClick, title }: IProps) => {
+const ConfirmButton = ({ onClick, title, show }: IProps) => {
   const theme = useTheme();
   return (
     <>
       <IconButton
         type={"submit"}
         sx={{
+          display: show ? "inline" : "none",
           ":hover": {
             backgroundColor: "transparent",
             transition: "transform 0.5s",

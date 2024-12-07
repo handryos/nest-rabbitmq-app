@@ -15,7 +15,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Iconify from "../Iconify/Iconify";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
 import menuItems from "./Routes";
 
 const drawerWidth = 240;
@@ -63,11 +62,6 @@ export default function MenuTop() {
 
   const router = useRouter();
   const pathName = usePathname();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const handleLogOff = () => {
     localStorage.removeItem("token");

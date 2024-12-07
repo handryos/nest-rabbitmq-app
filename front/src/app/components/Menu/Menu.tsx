@@ -117,11 +117,11 @@ export default function Menux() {
           <Box display="flex" justifyContent="start" p={2}>
             <img
               onClick={() => router.push("/routes/home")}
-              src="/logo.png"
+              src="/logo1.png"
               style={{ cursor: "pointer" }}
               alt="Logo"
-              height="50"
-              width="120"
+              height="30"
+              width="95"
             />
           </Box>
         </Toolbar>

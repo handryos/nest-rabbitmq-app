@@ -19,6 +19,7 @@ export type FormCardProps = {
   functionCancel?: (...args: any[]) => any;
   functionConfirm?: (...args: any[]) => any;
   topContent?: string;
+  removeConfirm?: boolean;
 } & BoxProps;
 
 const FormCard = ({
@@ -26,6 +27,7 @@ const FormCard = ({
   functionConfirm = () => {},
   functionCancel = () => {},
   topContent,
+  removeConfirm = false,
   ...props
 }: FormCardProps) => {
   const router = useRouter();
@@ -56,7 +58,7 @@ const FormCard = ({
           </Grid>
           <Grid item container height={"100%"} xs={4} sm={3} md={2}>
             <Box sx={{ marginLeft: "auto", p: 1, pl: 0, pb: 6 }}>
-              <ConfirmButton onClick={functionConfirm} />
+              <ConfirmButton show={!removeConfirm} onClick={functionConfirm} />
               <CancelButton
                 onClick={() => {
                   if (parseFloat(pathname.split("/").pop() || "")) {

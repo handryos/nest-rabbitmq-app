@@ -3,7 +3,7 @@ import axios from "axios";
 export default function AppAxios() {
   const token = localStorage.getItem("token");
   return axios.create({
-    baseURL: `https://dynamox-fullstack-test-production.up.railway.app`,
+    baseURL: `http://localhost:5500/repositories`,
     headers: {
       Authorization: `Bearer ${token}`,
     },

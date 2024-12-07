@@ -1,15 +1,10 @@
 const menuItems = [
   {
-    key: "/routes/monitoringPoints",
-    label: "Monitoring Points",
-    icon: "material-symbols:monitoring",
+    key: "/routes/repositories",
+    label: "Repositories",
+    icon: "mdi:github",
   },
   { divider: true },
-  {
-    key: "/routes/machines",
-    label: "Machines",
-    icon: "material-symbols:construction",
-  },
   { divider: true },
   { key: "/routes/login", label: "Log-off", icon: "material-symbols:logout" },
   { divider: true },
