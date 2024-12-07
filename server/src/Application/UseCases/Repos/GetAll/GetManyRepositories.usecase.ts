@@ -11,17 +11,17 @@ export class GetManyRepositories {
   ) {}
 
   async execute(pagination: PaginationDto) {
-    const { page, limit } = pagination;
+    let filters = pagination
+    if(filters == undefined){
+      filters = {
+  "page": 1,
+  "limit": 10,
+  "order": "ASC"
+}
+}
+    const repos = await this.repoRepository.getMany(filters);
 
-    if (!page || page <= 0) {
-      throw new Error('Page must be a positive number.');
-    }
 
-    if (!limit || limit <= 0) {
-      throw new Error('Limit must be a positive number.');
-    }
-
-    const repos = await this.repoRepository.getMany(pagination);
 
     if (!Array.of(repos).length) {
       throw new Error('No repositories found.');

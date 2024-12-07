@@ -33,7 +33,7 @@ export class RepositoriesController {
   @Post()
   // @UseGuards(AuthenticatedRequest)
   @HttpCode(HttpStatus.CREATED)
-  async addRepository(@Body() repository: RepositoryDTO): Promise<any> {
+  async addRepository(@Body() repository: RepositoryDTO[]): Promise<any> {
     try {
       await this.add.execute(repository);
       return { message: 'Repository created successfully' };
@@ -64,11 +64,11 @@ export class RepositoriesController {
   async getManyRepositories(@Query() pagination: PaginationDto): Promise<any> {
     try {
       const repos = await this.getAll.execute(pagination);
-      return { message: 'Repositories retrieved successfully', data: repos };
+      return { message: 'Repositories retrieved successfully', repositories: repos };
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error retrieving paginated repositories',
-        error,
+        error: error.message,
       });
     }
   }
@@ -101,7 +101,7 @@ export class RepositoriesController {
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error deleting the repository',
-        error,
+        error: error.message,
       });
     }
   }

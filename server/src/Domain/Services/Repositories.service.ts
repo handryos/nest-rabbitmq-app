@@ -15,17 +15,19 @@ export class RepositoriesService {
     private readonly reposRepository: IRepoRepository,
   ) {}
 
-async create(repository: RepositoryDTO): Promise<void> {
-  const newRepo = Object.assign(new Repository().dataValues, {
-    name: repository.name,
-    stars: repository.stars,
-    owner: repository.owner,
-  } as Repository);
-
+async create(repositories: RepositoryDTO[]): Promise<void> {
   try {
-    await this.reposRepository.create(newRepo);
+    for (const repository of repositories) {
+      const newRepo = Object.assign(new Repository().dataValues, {
+        name: repository.name,
+        stars: repository.stars,
+        owner: repository.owner,
+      } as Repository);
+      
+      await this.reposRepository.create(newRepo);
+    }
   } catch (err: any) {
-    throw new Error(`Error creating the repository: ${err.message}`);
+    throw new Error(`Error creating repositories: ${err.message}`);
   }
 }
 

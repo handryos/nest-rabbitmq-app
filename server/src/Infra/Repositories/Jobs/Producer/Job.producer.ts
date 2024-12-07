@@ -7,7 +7,7 @@ import { RepositoryDTO } from 'src/@shared/@dtos';
 export class RepositoryProducer {
   constructor(private readonly amqpConnection: AmqpConnection) {}
 
-  async publishCreateRepositoryMessage(data: RepositoryDTO): Promise<void> {
+  async publishCreateRepositoryMessage(data: RepositoryDTO[]): Promise<void> {
     try {
       await this.amqpConnection.publish(
         RabbitMQConfig.exchange, 

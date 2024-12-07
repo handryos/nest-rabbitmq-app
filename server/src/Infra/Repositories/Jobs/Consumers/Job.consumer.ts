@@ -17,10 +17,11 @@ export class RepositoryConsumer {
     routingKey: RabbitMQConfig.queues.createRepository.routingKey,
     queue: RabbitMQConfig.queues.createRepository.name,
   })
-  async createRepositoryHandler(data: Partial<RepositoryDTO>): Promise<{}> {
+  async createRepositoryHandler(data: Partial<RepositoryDTO[]>): Promise<{}> {
     try {
-      const dto = Object.assign(new RepositoryDTO(), data as Repository);
-      await this.service.create(dto);
+       const dtos = data.map((repo) => Object.assign(new RepositoryDTO(), repo));
+
+      await this.service.create(dtos); 
       return { message: 'Success!' };
     } catch (error) {
       console.error('Error processing create repository job:', error);

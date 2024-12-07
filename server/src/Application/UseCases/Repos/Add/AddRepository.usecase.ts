@@ -15,34 +15,57 @@ export class AddRepository {
     private readonly repositoryProducer: RepositoryProducer,
   ) {}
 
-  async execute(repository: RepositoryDTO) {
-    if (!repository.name || typeof repository.name !== 'string' || repository.name.trim() === '') {
-      throw new InternalServerErrorException('Repository name is required and must be a non-empty string.');
+ async execute(repositories: RepositoryDTO[]): Promise<void> {
+  const validatedRepositories = repositories.map((repository) => {
+    if (
+      !repository.name ||
+      typeof repository.name !== 'string' ||
+      repository.name.trim() === ''
+    ) {
+      throw new InternalServerErrorException(
+        'Repository name is required and must be a non-empty string.',
+      );
     }
 
-    if (!repository.stars || repository.stars < 0) {
-      throw new InternalServerErrorException('Repository stars must be a non-negative number.');
+
+    if (
+      !repository.owner ||
+      typeof repository.owner !== 'string' ||
+      repository.owner.trim() === ''
+    ) {
+      throw new InternalServerErrorException(
+        'Repository owner is required and must be a non-empty string.',
+      );
     }
 
-    if (!repository.owner || typeof repository.owner !== 'string' || repository.owner.trim() === '') {
-      throw new InternalServerErrorException('Repository owner is required and must be a non-empty string.');
-    }
-
-    const existingRepo = await this.reposRepository.getBy({ name: repository.name });
-    if (existingRepo) {
-      throw new InternalServerErrorException(`A repository with the name "${repository.name}" already exists.`);
-    }
-
-    const newRepo = new Repository();
-    Object.assign(newRepo, {
-      name: repository.name,
+    return {
+      name: repository.name.trim(),
       stars: repository.stars,
-      owner: repository.owner,
-    });
+      owner: repository.owner.trim(),
+    };
+  });
 
-    await this.repositoryProducer.publishCreateRepositoryMessage(newRepo);
+  const repositoryNames = validatedRepositories.map((repo) => repo.name);
 
-    return { message: 'Repository creation started successfully!', status: 201 };
+  const existingRepos = await this.reposRepository.getAll({
+    name: repositoryNames as unknown as string, 
+  });
+
+  const duplicates = validatedRepositories.filter((repo) =>
+    existingRepos.some((existingRepo) => existingRepo.name === repo.name),
+  );
+
+  if (duplicates.length > 0) {
+    throw new InternalServerErrorException(
+      `Repositories with the following names already exist: ${duplicates
+        .map((dup) => dup.name)
+        .join(', ')}`,
+    );
   }
+
+  await this.repositoryProducer.publishCreateRepositoryMessage(
+    validatedRepositories,
+  );
+}
  
 }
