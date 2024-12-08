@@ -140,7 +140,7 @@ export default function Login() {
                   fontFamily: "Roboto,system-ui",
                 }}
               >
-                {!loading ? "Entrar" : ""}
+                {!loading ? "Log-in" : ""}
               </Typography>
             </LoadingButton>
           </Box>
