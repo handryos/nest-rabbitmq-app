@@ -21,16 +21,18 @@ export class AuthenticatedRequest implements CanActivate {
     if (!authorization) {
       throw new UnauthorizedException('Token not provided!');
     }
+    const secretKey: string = 'secret';
 
     const token = authorization.split(' ')[1];
 
     try {
       const decoded = this.jwtService.verify(token, {
-        secret: process.env.SECRET_KEY,
+        secret: secretKey,
       });
       request.body.user = decoded;
       return true;
     } catch (err) {
+      console.log(err.message)
       throw new UnauthorizedException('Invalid Token!');
     }
   }
