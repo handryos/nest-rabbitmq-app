@@ -20,7 +20,7 @@
   - **Pagination and Sorting**: Allows sorting records by **date** and easily navigating between pages.
   - **Secure Routes**: Only authenticated users can access the APIs, requiring a valid token.
 - **API Documentation**:
-  - **Swagger**: The endpoint documentation has been implemented with Swagger and can be accessed at http://localhost:5500/api-docs#/.
+  - **Swagger**: The endpoint documentation is implemented with Swagger and can be accessed at http://localhost:5500/api-docs#/ after starting the application.
 ---
 
 ## 🖥️ **Frontend**
