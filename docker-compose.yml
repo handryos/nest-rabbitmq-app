@@ -1,16 +1,14 @@
-version: '3.8'
-
 services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq-my
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - app-network  
+      - app-network
 
   mariadb:
     image: mariadb:latest
@@ -21,18 +19,18 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - '3306:3306'
+      - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
-      - app-network  
+      - app-network
 
   nestjs-app:
     build:
-      context: .
+      context: ./server
       dockerfile: Dockerfile
     container_name: nestjs-app
-    ports: [] 
+    ports: []
     depends_on:
       - mariadb
       - rabbitmq
@@ -42,22 +40,36 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DB: ${DB_DB}
-      RABBITMQ_URL: ${RABBITMQ_URL}
+      RABBITMQ_URL: amqp://rabbitmq-my:5672
+    env_file:
+      - .env
     networks:
-      - app-network  
+      - app-network
+    restart: always
+
+  front-end:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: nextjs-app
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
     restart: always
 
   nginx:
     image: nginx:latest
     container_name: reverse_proxy
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro  
+      - ./server/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
-      - "5500:5500"  
+      - "5500:5500"
     depends_on:
-      - nestjs-app  
+      - nestjs-app
+      - front-end
     networks:
-      - app-network  
+      - app-network
     restart: always
 
 volumes:

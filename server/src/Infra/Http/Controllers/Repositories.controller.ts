@@ -16,7 +16,7 @@ import { RepositoryDTO } from 'src/@shared/@dtos';
 import { AddRepository } from 'src/Application/UseCases/Repos/Add/AddRepository.usecase';
 import { PaginationDto } from 'src/@shared/@pagination';
 import { GetManyRepositories } from 'src/Application/UseCases/Repos/GetAll/GetManyRepositories.usecase';
-import { GetRepositorieByName } from 'src/Application/UseCases/Repos/GetBy/GetBy.usecase';
+import { GetRepositorieById} from 'src/Application/UseCases/Repos/GetBy/GetBy.usecase';
 import { UpdateRepository } from 'src/Application/UseCases/Repos/Update/UpdateRepository';
 import { DeleteRepository } from 'src/Application/UseCases/Repos/Remove/RemoveRepository.usecase';
 
@@ -25,7 +25,7 @@ export class RepositoriesController {
   constructor(
     private readonly add: AddRepository,
     private readonly getAll: GetManyRepositories,
-    private readonly getBy: GetRepositorieByName,
+    private readonly getBy: GetRepositorieById,
     private readonly update: UpdateRepository,
     private readonly remove: DeleteRepository,
   ) {}
@@ -45,16 +45,16 @@ export class RepositoriesController {
     }
   }
 
-  @Get(':name')
+  @Get(':id')
   // @UseGuards(AuthenticatedRequest)
-  async getRepositoryByName(@Param('name') name: string): Promise<any> {
+  async getRepositoryById(@Param('id') id: number): Promise<any> {
     try {
-      const repo = await this.getBy.execute(name);
-      return { message: 'Repository retrieved successfully', data: repo };
+      const repo = await this.getBy.execute(id);
+      return { message: 'Repository retrieved successfully',  repo };
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error retrieving the repository',
-        error,
+        error: error.message,
       });
     }
   }

@@ -1,34 +1,26 @@
 describe("Login Page", () => {
   beforeEach(() => {
-    cy.visit("https://dynamox-test.netlify.app/routes/login");
+    cy.visit("http://localhost:3000/routes/login");
   });
 
-  it("should display error messages for empty fields", () => {
-    cy.visit("https://dynamox-test.netlify.app/routes/login");
-    cy.get('button[type="submit"]').click();
+  it("should load the login page", () => {
+    cy.contains("Log-in").should("be.visible");
 
-    cy.contains("This field is required").should("exist");
+    cy.get('input[name="name"]').should("exist");
+    cy.get('input[name="password"]').should("exist");
+
+    cy.contains("Entrar").should("be.visible");
   });
 
-  it("should display error message for invalid email", () => {
-    cy.get('input[name="email"]').type("invalid-email");
-    cy.get('input[name="password"]').type("somepassword");
+  it("should navigate to registration page when 'Register a new user' link is clicked", () => {
+    cy.get("a[href='/routes/register']").click();
 
-    cy.get('button[type="submit"]').click();
-
-    cy.contains("Please enter a valid email address").should("exist");
+    cy.url().should("include", "/routes/register");
   });
 
-  it("should display error message on login failure", () => {
-    cy.intercept("POST", "https://dynamox-test.netlify.app/routes/login", {
-      statusCode: 500,
-    });
+  it("should show form validation errors when fields are empty", () => {
+    cy.get("button[type='submit']").click();
 
-    cy.get('input[name="email"]').type("test@example.com");
-    cy.get('input[name="password"]').type("validpassword");
-
-    cy.get('button[type="submit"]').click();
-
-    cy.contains("Invalid email or password. Verify!.").should("exist");
+    cy.contains("This field is required").should("be.visible");
   });
 });

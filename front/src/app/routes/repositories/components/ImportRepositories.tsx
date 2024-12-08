@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { Repository } from "@/app/types/Repository";
 import FormProvider from "@/app/components/FormProvider/FormProvider";
 
-export default function CsvImport() {
+export default function ImportRepositories() {
   const [csvData, setCsvData] = useState<any[]>([]);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -35,7 +35,9 @@ export default function CsvImport() {
       const file = files[0];
       Papa.parse(file, {
         complete: (result) => {
-          setCsvData(result.data);
+          setCsvData(
+            result.data.filter((e: any) => e["Repository Name"] != "")
+          );
         },
         header: true,
       });
@@ -89,7 +91,6 @@ export default function CsvImport() {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          {/* Drag and Drop */}
           <Grid spacing={2} mb={2} item xs={3}>
             <Paper
               {...getRootProps()}
@@ -112,6 +113,7 @@ export default function CsvImport() {
 
           {/* Table */}
           <Grid
+            display={csvData.length > 0 ? "block" : "none"}
             mt={2}
             p={1}
             bgcolor={"transparent"}

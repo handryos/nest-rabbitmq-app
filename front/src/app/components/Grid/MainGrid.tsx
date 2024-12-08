@@ -181,6 +181,7 @@ export default function DataTable({
         }}
       >
         <StyledDataGrid
+          rowSelection={false}
           rows={data && data}
           disableRowSelectionOnClick
           columns={columns}

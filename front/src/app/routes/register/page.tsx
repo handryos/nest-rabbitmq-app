@@ -116,7 +116,6 @@ export default function Register() {
             >
               <Grid item xs={12} xl={12}>
                 <MainTextField
-                  required
                   fullWidth
                   requerido
                   id="name"
@@ -126,7 +125,6 @@ export default function Register() {
                   sx={{ mb: 2 }}
                 />
                 <MainTextField
-                  required
                   fullWidth
                   requerido
                   id="password"
@@ -137,7 +135,6 @@ export default function Register() {
                   sx={{ mb: 2 }}
                 />
                 <MainTextField
-                  required
                   fullWidth
                   requerido
                   id="confirm_password"

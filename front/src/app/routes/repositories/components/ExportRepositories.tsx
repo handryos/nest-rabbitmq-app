@@ -22,23 +22,18 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
-import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "@/app/redux/store";
 import { Repository } from "@/app/types/Repository";
-import RepositoryService from "@/app/services/Repository/RepositoryService";
 import MainAutoComplete from "@/app/components/AutoComplete/MainAutoComplete";
 import { Paper } from "@mui/material";
+import { useRouter } from "next/navigation";
 
-export default function RepositoriesForm({ type }: { type: string }) {
+export default function Repositories() {
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("This field is required"),
     type: Yup.string().required("This field is required"),
   });
 
-  const router = useRouter();
-  const id = usePathname().split("/").slice(-1)[0];
-
-  const repositoryData = useSelector((state) => state.repositories.repository);
   const userRepositories = useSelector(
     (state) => state.repositories.userRepositories
   );
@@ -68,32 +63,6 @@ export default function RepositoriesForm({ type }: { type: string }) {
     setUserRepos(userRepositories);
   }, [userRepositories]);
 
-  useEffect(() => {
-    if (type == "update" && repositoryData) {
-      setValue("name", repositoryData.name);
-      setValue("owner", repositoryData.owner);
-      setValue("stars", repositoryData.stars);
-    }
-  }, [repositoryData]);
-
-  const onSubmit = async (data: Repository) => {
-    let repository: Repository = {
-      name: data.name,
-      owner: data.owner,
-      stars: data.stars,
-    };
-    try {
-      let post =
-        type == "new"
-          ? await RepositoryService.save(repository)
-          : await RepositoryService.update(Number(id), repository);
-      if (post.status == 201 || post.status == 200)
-        router.push("/routes/repositories");
-    } catch (error) {
-      console.error("Error in register", error);
-    }
-  };
-
   const handleDeleteRepository = (repoName: string) => {
     setUserRepos((prev) => prev.filter((repo) => repo.name !== repoName));
   };
@@ -121,10 +90,10 @@ export default function RepositoriesForm({ type }: { type: string }) {
   };
 
   const theme = useTheme();
-
+  const router = useRouter();
   return (
     <FormCard
-      functionConfirm={handleSubmit(onSubmit)}
+      functionConfirm={handleSubmit(() => {})}
       topContent="Export Repository"
       removeConfirm
     >
@@ -171,8 +140,23 @@ export default function RepositoriesForm({ type }: { type: string }) {
                 Export to CSV
               </Typography>
             </IconButton>
+            <IconButton
+              sx={{ ":hover": { bgcolor: "transparent" } }}
+              onClick={() => router.push("new")}
+              color="primary"
+            >
+              <Iconify
+                color={theme.palette.primary.main}
+                icon="mdi:import"
+                fontSize={30}
+              />
+              <Typography variant="body2" ml={1}>
+                Go to Importations Tab
+              </Typography>
+            </IconButton>
           </Grid>
           <Grid
+            display={userRepos.length > 0 ? "block" : "none"}
             mt={2}
             p={1}
             bgcolor={"transparent"}

@@ -1,5 +1,10 @@
 const menuItems = [
   {
+    key: "/routes/home",
+    label: "Home",
+    icon: "mdi:home",
+  },
+  {
     key: "/routes/repositories",
     label: "Repositories",
     icon: "mdi:github",

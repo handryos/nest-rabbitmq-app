@@ -1,16 +1,12 @@
 import React, { useState } from "react";
-import {
-  Autocomplete,
-  TextField,
-  Grid,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Autocomplete, Grid, Stack, Typography } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import axios from "axios";
-import RepositoryService from "@/app/services/Repository/RepositoryService";
 import MainTextField from "../TextField/TextField";
-import { getUserRepositories } from "@/app/redux/slices/Repositories";
+import {
+  getUserRepositories,
+  setUserRepositories,
+} from "@/app/redux/slices/Repositories";
 import { dispatch } from "@/app/redux/store";
 
 export type IProps = {
@@ -49,6 +45,10 @@ const MainAutoComplete = ({
     }
   };
 
+  const handleClear = () => {
+    dispatch(getUserRepositories(""));
+  };
+
   return (
     <Grid item {...gridProps}>
       <Stack sx={{ width: "100%" }}>
@@ -84,7 +84,9 @@ const MainAutoComplete = ({
               getOptionLabel={(option) => option}
               onChange={(e, data) => {
                 field.onChange(data);
-                if (data != null) dispatch(getUserRepositories(data));
+                data != null
+                  ? dispatch(getUserRepositories(data))
+                  : dispatch(setUserRepositories([]));
               }}
               loadingText="Loading users..."
               noOptionsText="No users found"

@@ -69,16 +69,17 @@ export default {
       })
       .catch((error) => {
         toast.error(error.response.data.message);
-        console.error(error);
+        return error.response;
       });
   },
-  async delete(id: number) {
+  async delete(name: string) {
     return AppAxios()
-      .delete(`/${id}`)
+      .delete(`/${name}`)
       .then((Response) => {
         if (Response.status === 200) {
           toast.success("Repository deleted successfully");
         }
+        return Response;
       })
       .catch((error) => {
         toast.error(error.response.data.message);

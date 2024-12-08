@@ -70,18 +70,18 @@ export default function Repositorys() {
           >
             <DataTable
               exportFunction={() => {
-                router.push("machines/export");
+                router.push("repositories/export");
               }}
               removeCheckBox
               deleteFunction={(params) => {
-                RepositoryService.delete(params.id).then((response) => {
+                RepositoryService.delete(params.row.name).then((response) => {
                   if (response.status == 200) {
                     handleRemove(params.id);
                   }
                 });
               }}
               newFunction={() => {
-                router.push("machines/new");
+                router.push("repositories/new");
               }}
               editFunction={(params) => {
                 router.push("repositories/edit/" + params.id);

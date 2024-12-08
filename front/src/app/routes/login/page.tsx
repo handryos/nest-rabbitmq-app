@@ -107,7 +107,7 @@ export default function Login() {
                   requerido
                   name="name"
                   autoComplete="new-password"
-                  label="E-mail"
+                  label="Name"
                 />
               </Grid>
               <Grid item xs={12}>

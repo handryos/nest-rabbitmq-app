@@ -32,7 +32,7 @@ export class UpdateRepository {
     }
 
     const repoWithSameName = await this.repoRepository.getBy({ name: repoDTO.name });
-    if (repoWithSameName && repoWithSameName.id !== id) {
+    if (repoWithSameName && Number(repoWithSameName.id) !== Number(id)) {
       throw new Error(`A repository with the name "${repoDTO.name}" already exists.`);
     }
 
