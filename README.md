@@ -24,7 +24,7 @@
 
 ## 🖥️ **Frontend**
 
-- **Framework**: Built with **React** and **Next.js** for a modern and high-performance experience.
+- **Framework**: Built with **React** and **Next.js**.
 - **UI Framework**: Uses **Material-UI (MUI)** for elegant styling and reusable components.
 - **Global State**:
   - Managed with **Redux**, using **Thunks** to handle asynchronous calls.
